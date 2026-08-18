@@ -1,6 +1,4 @@
-import { ApiError } from '../lib/api'
-
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? 'http://127.0.0.1:8001/api'
+import { API_BASE_URL, ApiError } from '../lib/api'
 const TOKEN_KEY = 'kaka-studio-token'
 
 export function getStudioToken() {

@@ -1,4 +1,6 @@
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? 'http://127.0.0.1:8001/api'
+export const API_BASE_URL = (
+  import.meta.env.VITE_API_BASE_URL ?? 'http://127.0.0.1:8001/api'
+).replace(/\/+$/, '')
 
 export class ApiError extends Error {
   status: number
@@ -24,7 +26,7 @@ export async function apiPost<T>(path: string, body: unknown): Promise<T> {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
   })
-    if (!response.ok) {
+  if (!response.ok) {
     let message = `Request failed: ${response.status}`
     if (response.status === 429) message = 'Too many requests. Wait a moment, then try again.'
     try {
@@ -42,5 +44,3 @@ export async function apiPost<T>(path: string, body: unknown): Promise<T> {
   }
   return response.json() as Promise<T>
 }
-
-export { API_BASE_URL }
