@@ -1,0 +1,31 @@
+{% extends 'admin/base.html' %}
+
+{% load i18n %}
+
+{% block title %}{% if subtitle %}{{ subtitle }} | {% endif %}{{ title }} | {{ site_title|default:_('Django site admin') }}{% endblock %}
+
+{% block branding %}
+    {% include "unfold/helpers/site_branding.html" %}
+{% endblock %}
+
+{% block content %}
+    {% if kaka_cards %}
+        <div class="mb-8 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+            {% for card in kaka_cards %}
+                <a href="{{ card.link }}" class="block border border-base-200 p-5 rounded-default hover:border-primary-500 dark:border-base-800 dark:hover:border-primary-500">
+                    <p class="text-sm text-font-subtle-light dark:text-font-subtle-dark">{{ card.title }}</p>
+                    <p class="mt-2 text-3xl font-semibold text-font-important-light dark:text-font-important-dark">{{ card.metric }}</p>
+                    <p class="mt-1 text-xs text-font-subtle-light dark:text-font-subtle-dark">{{ card.hint }}</p>
+                </a>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <div class="flex flex-col lg:flex-row lg:gap-8">
+        <div class="grow">
+            {% include "unfold/helpers/app_list_default.html" %}
+        </div>
+
+        {% include "unfold/helpers/history.html" %}
+    </div>
+{% endblock %}
