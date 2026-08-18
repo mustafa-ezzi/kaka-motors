@@ -15,6 +15,12 @@ case "$port" in
   ''|*[!0-9]*) port=8000 ;;
 esac
 
-python manage.py migrate --noinput
-python manage.py collectstatic --noinput
+if command -v python3 >/dev/null 2>&1; then
+  py=python3
+else
+  py=python
+fi
+
+"$py" manage.py migrate --noinput
+"$py" manage.py collectstatic --noinput
 exec gunicorn config.wsgi:application --bind "0.0.0.0:${port}"

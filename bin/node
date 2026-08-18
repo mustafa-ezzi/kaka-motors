@@ -1,0 +1,17 @@
+#!/bin/sh
+# Railway fallback: this service is Django. "node server.mjs" is the frontend command.
+echo "Kaka Motors API: starting gunicorn (this is not the Node frontend)." >&2
+if [ -f /app/backend/start.sh ]; then
+  exec sh /app/backend/start.sh
+fi
+if [ -f /app/start.sh ]; then
+  exec sh /app/start.sh
+fi
+if [ -f backend/start.sh ]; then
+  exec sh backend/start.sh
+fi
+if [ -f start.sh ]; then
+  exec sh start.sh
+fi
+echo "start.sh not found" >&2
+exit 1

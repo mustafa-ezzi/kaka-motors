@@ -14,11 +14,29 @@ SECURE_HSTS_PRELOAD = True
 CORS_ALLOW_ALL_ORIGINS = False
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 
+railway_domain = env('RAILWAY_PUBLIC_DOMAIN', default='')  # noqa: F405
+if railway_domain:
+    ALLOWED_HOSTS = list({*ALLOWED_HOSTS, railway_domain, '.up.railway.app'})  # noqa: F405
+    origin = f'https://{railway_domain}'
+    if origin not in CSRF_TRUSTED_ORIGINS:  # noqa: F405
+        CSRF_TRUSTED_ORIGINS = [*CSRF_TRUSTED_ORIGINS, origin]  # noqa: F405
+
+frontend = (FRONTEND_URL or '').rstrip('/')  # noqa: F405
+if frontend.startswith('http') and frontend not in CORS_ALLOWED_ORIGINS:  # noqa: F405
+    CORS_ALLOWED_ORIGINS = [*CORS_ALLOWED_ORIGINS, frontend]  # noqa: F405
+if frontend.startswith('http') and frontend not in CSRF_TRUSTED_ORIGINS:  # noqa: F405
+    CSRF_TRUSTED_ORIGINS = [*CSRF_TRUSTED_ORIGINS, frontend]  # noqa: F405
+
+if not ALLOWED_HOSTS:  # noqa: F405
+    ALLOWED_HOSTS = ['.up.railway.app', '127.0.0.1', 'localhost']  # noqa: F405
+
 if not CORS_ALLOWED_ORIGINS:  # noqa: F405
-    raise ImproperlyConfigured('Production requires CORS_ALLOWED_ORIGINS. Do not allow all origins.')
+    raise ImproperlyConfigured(
+        'Set FRONTEND_URL or CORS_ALLOWED_ORIGINS to your public site origin, e.g. https://kaka-motors.up.railway.app'
+    )
 
 if not CSRF_TRUSTED_ORIGINS:  # noqa: F405
-    raise ImproperlyConfigured('Production requires CSRF_TRUSTED_ORIGINS (https://your-domain).')
+    raise ImproperlyConfigured('Set CSRF_TRUSTED_ORIGINS or FRONTEND_URL to an https origin.')
 
 if not (
     CLOUDFLARE_R2_ACCESS_KEY_ID  # noqa: F405

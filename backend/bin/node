@@ -1,0 +1,3 @@
+#!/bin/sh
+echo "Kaka Motors API: starting gunicorn (this is not the Node frontend)." >&2
+exec sh /app/start.sh
