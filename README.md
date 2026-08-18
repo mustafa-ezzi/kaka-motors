@@ -103,8 +103,8 @@ This is a **monorepo**. Create **two services**. Do not use one start command fo
 
 ### Backend service
 
-- **Root Directory:** `backend`
-- **Start Command:** `sh start.sh` — never `node server.mjs` (that is the frontend; it causes 503)
+- **Root Directory:** `backend` (or empty if the service builds from the repo root)
+- **Custom Start Command:** `sh start.sh` — or leave it **blank**. Do not use `node server.mjs` on this service.
 - Variables: `DJANGO_SETTINGS_MODULE=config.settings.production`, `DEBUG=False`, `SECRET_KEY`, `DATABASE_URL`, `ALLOWED_HOSTS`, `CORS_ALLOWED_ORIGINS`, `CSRF_TRUSTED_ORIGINS`, `FRONTEND_URL`, `CLOUDFLARE_R2_*`
 
 ### Frontend service

@@ -1,6 +1,14 @@
 {
   "$schema": "https://schema.railpack.com",
   "provider": "python",
+  "steps": {
+    "build": {
+      "commands": [
+        "...",
+        "mkdir -p bin backend/bin && printf '%s\\n' '#!/bin/sh' 'exec sh /app/start.sh' > bin/node && printf '%s\\n' '#!/bin/sh' 'exec sh /app/backend/start.sh' > backend/bin/node && chmod 755 bin/node backend/bin/node start.sh backend/start.sh"
+      ]
+    }
+  },
   "deploy": {
     "startCommand": "sh start.sh",
     "paths": ["/app/bin", "/app/backend/bin"]
