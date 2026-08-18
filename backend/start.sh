@@ -10,6 +10,11 @@ else
   exit 1
 fi
 
+port="${PORT:-8000}"
+case "$port" in
+  ''|*[!0-9]*) port=8000 ;;
+esac
+
 python manage.py migrate --noinput
 python manage.py collectstatic --noinput
-exec gunicorn config.wsgi:application --bind "0.0.0.0:${PORT:-8000}"
+exec gunicorn config.wsgi:application --bind "0.0.0.0:${port}"

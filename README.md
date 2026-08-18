@@ -116,8 +116,10 @@ Required variables (same service):
 - `CORS_ALLOWED_ORIGINS` / `CSRF_TRUSTED_ORIGINS` / `FRONTEND_URL` (frontend HTTPS URL)
 - All `CLOUDFLARE_R2_*` keys
 
-Start command is already in `backend/railpack.json`. You can also paste this in **Settings → Start Command**:
+Start command is `sh backend/start.sh`. In Railway **Settings → Deploy → Start Command**, use exactly:
 
 ```bash
-gunicorn config.wsgi:application --bind 0.0.0.0:$PORT
+sh backend/start.sh
 ```
+
+Do not use `gunicorn ... --bind 0.0.0.0:$PORT`. Gunicorn does not expand `$PORT`, which causes `'$PORT' is not a valid port number`. Do not add a `PORT` variable yourself — Railway sets it.
