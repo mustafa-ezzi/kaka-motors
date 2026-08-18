@@ -1,7 +1,7 @@
 {
   "$schema": "https://schema.railpack.com",
-  "provider": "python",
+  "provider": "node",
   "deploy": {
-    "startCommand": "sh backend/start.sh"
+    "startCommand": "sh start.sh"
   }
 }

@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "start": "sh start.sh"
   },
   "dependencies": {
     "@fontsource/dm-mono": "^5.2.5",
@@ -21,6 +22,7 @@
     "lucide-react": "^0.487.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
+    "serve": "^14.2.4",
     "three": "^0.185.1",
     "wouter": "^3.7.0",
     "zod": "^3.25.76"

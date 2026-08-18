@@ -97,29 +97,21 @@ location / {
 }
 ```
 
-## Railway (backend)
+## Railway
 
-This repo is a monorepo. If Railpack says **prepare exited with an error**, it almost always means the service is building the **repo root** (no `requirements.txt` / `manage.py` there).
+This is a **monorepo**. Create **two services**. Do not use one start command for both.
 
-In the backend service:
+### Backend service
 
-1. **Settings → Root Directory** → `backend`
-2. Redeploy
+- **Root Directory:** `backend`
+- **Start Command:** `sh start.sh`
+- Variables: `DJANGO_SETTINGS_MODULE=config.settings.production`, `DEBUG=False`, `SECRET_KEY`, `DATABASE_URL`, `ALLOWED_HOSTS`, `CORS_ALLOWED_ORIGINS`, `CSRF_TRUSTED_ORIGINS`, `FRONTEND_URL`, `CLOUDFLARE_R2_*`
 
-Required variables (same service):
+### Frontend service
 
-- `DJANGO_SETTINGS_MODULE=config.settings.production`
-- `DEBUG=False`
-- `SECRET_KEY` (new random string)
-- `DATABASE_URL` (from the Postgres plugin)
-- `ALLOWED_HOSTS` (your `*.up.railway.app` host, no `https://`)
-- `CORS_ALLOWED_ORIGINS` / `CSRF_TRUSTED_ORIGINS` / `FRONTEND_URL` (frontend HTTPS URL)
-- All `CLOUDFLARE_R2_*` keys
+- **Root Directory:** `frontend`
+- **Start Command:** `sh start.sh`
+- Build happens via `npm run build` (Railpack / `package.json`)
+- Variable: `VITE_API_BASE_URL=https://YOUR-BACKEND.up.railway.app/api` (set **before** build, then redeploy)
 
-Start command is `sh backend/start.sh`. In Railway **Settings → Deploy → Start Command**, use exactly:
-
-```bash
-sh backend/start.sh
-```
-
-Do not use `gunicorn ... --bind 0.0.0.0:$PORT`. Gunicorn does not expand `$PORT`, which causes `'$PORT' is not a valid port number`. Do not add a `PORT` variable yourself — Railway sets it.
+Do not set a custom start command of `sh backend/start.sh` on the frontend. Do not set `PORT` yourself.
