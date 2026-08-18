@@ -96,3 +96,28 @@ location / {
   try_files $uri $uri/ /index.html;
 }
 ```
+
+## Railway (backend)
+
+This repo is a monorepo. If Railpack says **prepare exited with an error**, it almost always means the service is building the **repo root** (no `requirements.txt` / `manage.py` there).
+
+In the backend service:
+
+1. **Settings → Root Directory** → `backend`
+2. Redeploy
+
+Required variables (same service):
+
+- `DJANGO_SETTINGS_MODULE=config.settings.production`
+- `DEBUG=False`
+- `SECRET_KEY` (new random string)
+- `DATABASE_URL` (from the Postgres plugin)
+- `ALLOWED_HOSTS` (your `*.up.railway.app` host, no `https://`)
+- `CORS_ALLOWED_ORIGINS` / `CSRF_TRUSTED_ORIGINS` / `FRONTEND_URL` (frontend HTTPS URL)
+- All `CLOUDFLARE_R2_*` keys
+
+Start command is already in `backend/railpack.json`. You can also paste this in **Settings → Start Command**:
+
+```bash
+gunicorn config.wsgi:application --bind 0.0.0.0:$PORT
+```
