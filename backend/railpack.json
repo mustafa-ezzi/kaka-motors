@@ -1,16 +1,10 @@
 {
   "$schema": "https://schema.railpack.com",
   "provider": "python",
-  "steps": {
-    "build": {
-      "commands": [
-        "...",
-        "mkdir -p bin && printf '%s\\n' '#!/bin/sh' 'exec sh /app/start.sh' > bin/node && chmod 755 bin/node start.sh"
-      ]
-    }
+  "packages": {
+    "python": "3.13"
   },
   "deploy": {
-    "startCommand": "sh start.sh",
-    "paths": ["/app/bin"]
+    "startCommand": "sh start.sh"
   }
 }

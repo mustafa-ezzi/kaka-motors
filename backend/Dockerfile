@@ -14,12 +14,8 @@ COPY requirements.txt /app/requirements.txt
 RUN pip install --no-cache-dir -r /app/requirements.txt
 
 COPY . /app
-RUN mkdir -p /app/staticfiles /app/bin \
-    && chmod +x /app/start.sh /app/bin/node \
-    && printf '%s\n' '#!/bin/sh' 'exec sh /app/start.sh' > /app/bin/node \
-    && chmod +x /app/bin/node
-
-ENV PATH="/app/bin:${PATH}"
+RUN mkdir -p /app/staticfiles \
+    && chmod +x /app/start.sh
 
 EXPOSE 8000
 

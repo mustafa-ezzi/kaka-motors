@@ -104,6 +104,7 @@ This is a **monorepo**. Create **two services**. Do not use one start command fo
 ### Backend service
 
 - **Root Directory:** `backend` (or empty if the service builds from the repo root)
+- **Builder:** Railpack (not Dockerfile, unless you set Dockerfile path to `backend/Dockerfile` and Root Directory to `backend`)
 - **Custom Start Command:** `sh start.sh` — or leave it **blank**. Do not use `node server.mjs` on this service.
 - Variables: `DJANGO_SETTINGS_MODULE=config.settings.production`, `DEBUG=False`, `SECRET_KEY`, `DATABASE_URL`, `ALLOWED_HOSTS`, `CORS_ALLOWED_ORIGINS`, `CSRF_TRUSTED_ORIGINS`, `FRONTEND_URL`, `CLOUDFLARE_R2_*`
 
