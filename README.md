@@ -110,8 +110,8 @@ This is a **monorepo**. Create **two services**. Do not use one start command fo
 ### Frontend service
 
 - **Root Directory:** `frontend`
-- **Start Command:** `sh start.sh`
+- **Start Command:** `node server.mjs`
 - Build happens via `npm run build` (Railpack / `package.json`)
 - Variable: `VITE_API_BASE_URL=https://YOUR-BACKEND.up.railway.app/api` (set **before** build, then redeploy)
 
-Do not set a custom start command of `sh backend/start.sh` on the frontend. Do not set `PORT` yourself.
+Do not put `$PORT` in any start command. Do not install/run `serve` with `-l $PORT`. Railway injects `PORT`; `server.mjs` reads it as a number.
