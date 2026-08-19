@@ -25,7 +25,37 @@ export function CarDetailPage() {
   const [active, setActive] = useState(0)
   const [saved, setSaved] = useState(false)
 
-  const media = car?.gallery ?? []
+  const rawMedia = car?.gallery ?? []
+  // If no gallery, synthesise entries from hero / card images so the viewer always shows something
+  const media = useMemo(() => {
+    if (rawMedia.length > 0) return rawMedia
+    const fallbacks = []
+    if (car?.heroImageUrl) {
+      fallbacks.push({
+        id: 'hero',
+        kind: 'image' as const,
+        imageUrl: car.heroImageUrl,
+        imageSrcSet: car.heroSrcSet,
+        alt: car.name,
+        objectPosition: car.heroObjectPosition ?? 'center',
+        sortOrder: 0,
+        label: 'Exterior',
+      })
+    }
+    if (car?.cardImageUrl && car.cardImageUrl !== car?.heroImageUrl) {
+      fallbacks.push({
+        id: 'card',
+        kind: 'image' as const,
+        imageUrl: car.cardImageUrl,
+        imageSrcSet: car.cardSrcSet,
+        alt: car.name,
+        objectPosition: 'center',
+        sortOrder: 1,
+        label: 'Studio',
+      })
+    }
+    return fallbacks
+  }, [rawMedia, car])
   const current = media[active] ?? media[0]
   const tabs = useMemo(() => media, [media])
 

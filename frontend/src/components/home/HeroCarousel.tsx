@@ -45,15 +45,15 @@ export function HeroCarousel({ vehicles, ctaLabel, eyebrow, headline, index, onI
   ]
 
   return (
-    <section className="hero-stage relative z-10 flex min-h-[100svh] items-end pb-16 pt-32 md:items-center md:pb-24">
-      <div className="shell grid w-full items-end gap-10 md:grid-cols-[1fr_auto] md:items-center">
+    <section className="hero-stage relative z-10 flex min-h-[100svh] items-end pb-10 pt-28 md:items-center md:pb-24 md:pt-32">
+      <div className="shell grid w-full items-end gap-6 md:grid-cols-[1fr_auto] md:items-center md:gap-10">
         <div className="max-w-2xl">
           <p className="font-mono text-[0.62rem] uppercase tracking-[0.26em] text-amber">{eyebrow}</p>
-          <h1 className="display mt-5 text-[clamp(2.8rem,8vw,6.4rem)] text-white">{active.name}</h1>
-          <p className="mt-5 max-w-md border-l-2 border-signal pl-4 text-base leading-relaxed text-white/80 md:text-lg">
+          <h1 className="display mt-4 text-[clamp(2.2rem,8vw,6.4rem)] leading-none text-white">{active.name}</h1>
+          <p className="mt-4 max-w-md border-l-2 border-signal pl-4 text-sm leading-relaxed text-white/80 md:text-base md:text-lg">
             {headline}
           </p>
-          <div className="mt-8 flex flex-wrap gap-3">
+          <div className="mt-6 flex flex-wrap gap-3">
             <ButtonLink href={`/cars/${active.slug}`} variant="deep">
               {ctaLabel} {active.name}
             </ButtonLink>
@@ -61,19 +61,20 @@ export function HeroCarousel({ vehicles, ctaLabel, eyebrow, headline, index, onI
               Explore collection
             </ButtonLink>
           </div>
-          <dl className="mt-10 grid max-w-md grid-cols-3 gap-3">
+          <dl className="mt-6 grid max-w-md grid-cols-3 gap-2 md:mt-10 md:gap-3">
             {stats.map((stat, statIndex) => (
-              <div key={stat.label} className="rounded-xl border border-white/15 bg-carbon/70 px-3 py-4 backdrop-blur-sm">
-                <dt className={`font-mono text-[0.56rem] uppercase tracking-[0.2em] ${statAccents[statIndex].label}`}>
+              <div key={stat.label} className="rounded-xl border border-white/15 bg-carbon/70 px-2 py-3 backdrop-blur-sm md:px-3 md:py-4">
+                <dt className={`font-mono text-[0.5rem] uppercase tracking-[0.18em] md:text-[0.56rem] md:tracking-[0.2em] ${statAccents[statIndex].label}`}>
                   {stat.label}
                 </dt>
-                <dd className="display mt-1 text-xl text-white md:text-2xl">{stat.value}</dd>
+                <dd className="display mt-1 text-base text-white md:text-2xl">{stat.value}</dd>
               </div>
             ))}
           </dl>
         </div>
 
-        <div className="flex items-center gap-3">
+        {/* Nav — hidden on mobile, shown on md+ */}
+        <div className="hidden items-center gap-3 md:flex">
           <button
             type="button"
             className="focus-scarlet grid h-11 w-11 place-items-center rounded-full border border-white/25 bg-carbon/60 text-white backdrop-blur-sm transition-colors hover:bg-white hover:text-carbon"
@@ -102,6 +103,38 @@ export function HeroCarousel({ vehicles, ctaLabel, eyebrow, headline, index, onI
             aria-label="Next car"
           >
             <ChevronRight size={18} />
+          </button>
+        </div>
+
+        {/* Mobile dot nav */}
+        <div className="flex items-center justify-between md:hidden">
+          <button
+            type="button"
+            className="focus-scarlet grid h-10 w-10 place-items-center rounded-full border border-white/25 bg-carbon/60 text-white backdrop-blur-sm"
+            onClick={() => go(-1)}
+            aria-label="Previous car"
+          >
+            <ChevronLeft size={16} />
+          </button>
+          <div className="flex gap-2">
+            {vehicles.map((car, carIndex) => (
+              <button
+                key={car.id}
+                type="button"
+                aria-label={`Show ${car.name}`}
+                onClick={() => onIndex(carIndex)}
+                className="focus-scarlet h-2 rounded-full transition-all"
+                style={{ width: carIndex === index ? '2rem' : '0.5rem', background: carIndex === index ? '#e11d38' : 'rgba(255,255,255,0.3)' }}
+              />
+            ))}
+          </div>
+          <button
+            type="button"
+            className="focus-scarlet grid h-10 w-10 place-items-center rounded-full border border-white/25 bg-carbon/60 text-white backdrop-blur-sm"
+            onClick={() => go(1)}
+            aria-label="Next car"
+          >
+            <ChevronRight size={16} />
           </button>
         </div>
       </div>
