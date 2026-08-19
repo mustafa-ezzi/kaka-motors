@@ -59,8 +59,12 @@ class PublicTestDriveSerializer(serializers.ModelSerializer):
 
     def validate_city(self, value):
         city = (value or '').strip()
-        if not StudioLocation.objects.filter(city=city, active=True).exists():
-            raise serializers.ValidationError('Choose a studio city.')
+        if not city:
+            raise serializers.ValidationError('City is required.')
+        # Accept any city if no studio locations have been configured yet
+        if StudioLocation.objects.filter(active=True).exists():
+            if not StudioLocation.objects.filter(city__iexact=city, active=True).exists():
+                raise serializers.ValidationError('Choose a studio city.')
         return city
 
     def validate_vehicleSlug(self, value):

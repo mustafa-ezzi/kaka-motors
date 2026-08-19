@@ -3,6 +3,7 @@ import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { Link } from 'wouter'
 import type { Vehicle } from '../../lib/types'
 import { ButtonLink } from '../ButtonLink'
+import DecryptedText from '../DecryptedText'
 import { ShowroomImage } from '../ShowroomImage'
 
 type Props = {
@@ -48,8 +49,32 @@ export function HeroCarousel({ vehicles, ctaLabel, eyebrow, headline, index, onI
     <section className="hero-stage relative z-10 flex min-h-[100svh] items-end pb-10 pt-28 md:items-center md:pb-24 md:pt-32">
       <div className="shell grid w-full items-end gap-6 md:grid-cols-[1fr_auto] md:items-center md:gap-10">
         <div className="max-w-2xl">
-          <p className="font-mono text-[0.62rem] uppercase tracking-[0.26em] text-amber">{eyebrow}</p>
-          <h1 className="display mt-4 text-[clamp(2.2rem,8vw,6.4rem)] leading-none text-white">{active.name}</h1>
+          <p className="font-mono text-[0.62rem] uppercase tracking-[0.26em] text-amber">
+            <DecryptedText
+              text={eyebrow}
+              animateOn="view"
+              sequential
+              revealDirection="start"
+              speed={38}
+              characters="ABCDEFGHIJKLMNOPQRSTUVWXYZ·0123456789"
+              className="text-amber"
+              encryptedClassName="text-amber/40"
+            />
+          </p>
+          <h1 className="display mt-4 text-[clamp(2.2rem,8vw,6.4rem)] leading-none text-white">
+            <DecryptedText
+              key={active.name}
+              text={active.name}
+              animateOn="view"
+              sequential
+              revealDirection="start"
+              speed={28}
+              maxIterations={14}
+              characters="ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+              className="text-white"
+              encryptedClassName="text-white/25"
+            />
+          </h1>
           <p className="mt-4 max-w-md border-l-2 border-signal pl-4 text-sm leading-relaxed text-white/80 md:text-base md:text-lg">
             {headline}
           </p>
