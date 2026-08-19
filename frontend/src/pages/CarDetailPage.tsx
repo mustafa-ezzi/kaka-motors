@@ -86,7 +86,7 @@ export function CarDetailPage() {
   }
 
   return (
-    <article className="pb-20 pt-20 md:pt-28">
+    <article className="pb-20 pt-28 md:pt-36">
       <Seo
         title={`${car.name} — Kaka Motors`}
         description={car.summary}
@@ -106,75 +106,90 @@ export function CarDetailPage() {
       <div className="shell">
         <Link
           href="/showcase"
-          className="focus-scarlet inline-flex items-center gap-2 font-mono text-[0.68rem] uppercase tracking-[0.2em] text-white/55 hover:text-scarlet-soft"
+          className="focus-scarlet inline-flex min-h-11 items-center gap-2 font-mono text-[0.66rem] uppercase tracking-[0.2em] text-white/55 hover:text-scarlet-soft"
         >
           <ArrowLeft size={14} /> Back to collection
         </Link>
-        <p className="eyebrow mt-6">{car.statusLabel}</p>
-        <h1 className="display mt-2 text-[clamp(2.2rem,7vw,6rem)] leading-none">{car.name}</h1>
-        <p className="mt-3 max-w-2xl text-sm leading-relaxed text-white/65 md:text-base">{car.summary}</p>
+        <p className="eyebrow mt-4">{car.statusLabel}</p>
+        <h1 className="display mt-2 text-[clamp(2.2rem,7vw,6rem)] leading-[1.02]">{car.name}</h1>
+        <p className="mt-4 max-w-2xl text-sm leading-relaxed text-white/65 md:text-base">{car.summary}</p>
       </div>
 
       {/* Image viewer */}
-      <div className="relative mt-6 w-full overflow-hidden" style={{ aspectRatio: '16/9', minHeight: '44vw', maxHeight: '80vh' }}>
-        {current && (
-          <ShowroomImage
-            key={current.id}
-            src={current.imageUrl}
-            srcSet={current.imageSrcSet}
-            alt={current.alt || `${car.name} studio view`}
-            objectPosition={current.objectPosition ?? 'center'}
-            priority
-            className="absolute inset-0 h-full w-full object-cover"
-            sizes="100vw"
-          />
+      <div className="shell mt-7 md:mt-9">
+        <div
+          className="relative overflow-hidden rounded-2xl border border-white/10 bg-panel"
+          style={{ aspectRatio: '16 / 10' }}
+        >
+          {current && (
+            <ShowroomImage
+              key={current.id}
+              src={current.imageUrl}
+              srcSet={current.imageSrcSet}
+              alt={current.alt || `${car.name} studio view`}
+              objectPosition={current.objectPosition ?? 'center'}
+              priority
+              className="absolute inset-0 h-full w-full object-cover"
+              sizes="(max-width: 768px) 100vw, 1200px"
+            />
+          )}
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-ink/55 via-transparent to-transparent" />
+        </div>
+
+        {/* Gallery switcher */}
+        {tabs.length > 1 && (
+          <div className="mt-3 flex flex-wrap gap-2">
+            {tabs.map((item, index) => (
+              <button
+                key={item.id}
+                type="button"
+                onClick={() => setActive(index)}
+                className={`focus-scarlet min-h-10 rounded-full px-4 font-mono text-[0.6rem] uppercase tracking-[0.18em] transition-colors ${
+                  active === index
+                    ? 'bg-white text-ink'
+                    : 'border border-white/15 text-white/55 hover:border-white/40 hover:text-white'
+                }`}
+              >
+                {item.label ?? `View ${index + 1}`}
+              </button>
+            ))}
+          </div>
         )}
-        <div className="absolute inset-0 bg-gradient-to-t from-ink/60 to-transparent" />
       </div>
 
-      {/* Gallery tab strip — below image, not overlapping */}
-      {tabs.length > 1 && (
-        <div className="shell mt-3 flex flex-wrap gap-2">
-          {tabs.map((item, index) => (
-            <button
-              key={item.id}
-              type="button"
-              onClick={() => setActive(index)}
-              className={`focus-scarlet min-h-10 rounded-full px-4 font-mono text-[0.6rem] uppercase tracking-[0.18em] transition-colors ${
-                active === index
-                  ? 'bg-white text-ink'
-                  : 'border border-white/20 text-white/60 hover:border-white/50 hover:text-white'
-              }`}
-            >
-              {item.label ?? `View ${index + 1}`}
-            </button>
-          ))}
-        </div>
-      )}
-
       {/* Body content */}
-      <div className="shell mt-8 grid gap-8 md:mt-12 md:grid-cols-[1.1fr_0.9fr] md:items-start md:gap-12">
+      <div className="shell mt-10 grid gap-10 md:mt-14 md:grid-cols-[1.1fr_0.9fr] md:items-start md:gap-12">
         <div>
           <p className="text-sm leading-relaxed text-white/70 md:text-base">{car.description}</p>
+
           {car.interiorStory && (
-            <div className="mt-8">
+            <div className="mt-9">
               <p className="eyebrow">Interior</p>
               <p className="mt-3 text-sm leading-relaxed text-white/70 md:text-base">{car.interiorStory}</p>
             </div>
           )}
+
           {car.features.length > 0 && (
-            <ul className="mt-6 space-y-2">
-              {car.features.map((feature) => (
-                <li key={feature} className="font-mono text-[0.66rem] uppercase tracking-[0.14em] text-white/50">
-                  — {feature}
-                </li>
-              ))}
-            </ul>
+            <div className="mt-9">
+              <p className="eyebrow">Equipment</p>
+              <ul className="mt-4 flex flex-wrap gap-2">
+                {car.features.map((feature) => (
+                  <li
+                    key={feature}
+                    className="rounded-full border border-white/12 bg-white/[0.04] px-3 py-1.5 font-mono text-[0.6rem] uppercase tracking-[0.14em] text-white/65"
+                  >
+                    {feature}
+                  </li>
+                ))}
+              </ul>
+            </div>
           )}
         </div>
 
-        <div className="space-y-5">
-          <SpecGrid specs={car.specs} />
+        <div className="space-y-5 md:sticky md:top-28">
+          <div className="overflow-hidden rounded-2xl border border-white/10">
+            <SpecGrid specs={car.specs} />
+          </div>
           <div className="flex flex-wrap gap-3">
             <ButtonLink href={`/test-drive?car=${car.slug}`}>Reserve a drive</ButtonLink>
             <button

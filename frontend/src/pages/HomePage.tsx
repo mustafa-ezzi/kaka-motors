@@ -26,17 +26,22 @@ export function HomePage() {
       const mm = gsap.matchMedia()
       mm.add('(prefers-reduced-motion: no-preference)', () => {
         gsap.utils.toArray<HTMLElement>('.home-reveal').forEach((el) => {
-          gsap.from(el, {
-            y: 28,
-            opacity: 0,
-            duration: 0.8,
-            ease: 'power3.out',
-            scrollTrigger: {
-              trigger: el,
-              start: 'top bottom',
-              toggleActions: 'play none none none',
+          gsap.fromTo(
+            el,
+            { y: 28, opacity: 0 },
+            {
+              y: 0,
+              opacity: 1,
+              duration: 0.8,
+              ease: 'power3.out',
+              immediateRender: false,
+              scrollTrigger: {
+                trigger: el,
+                start: 'top bottom',
+                toggleActions: 'play none none none',
+              },
             },
-          })
+          )
         })
       })
       return () => mm.revert()

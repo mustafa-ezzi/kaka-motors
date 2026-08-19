@@ -60,17 +60,24 @@ export function AboutPage() {
       const mm = gsap.matchMedia()
       mm.add('(prefers-reduced-motion: no-preference)', () => {
         gsap.utils.toArray<HTMLElement>('.about-reveal').forEach((el) => {
-          gsap.from(el, {
-            y: 28,
-            opacity: 0,
-            duration: 0.8,
-            ease: 'power3.out',
-            scrollTrigger: {
-              trigger: el,
-              start: 'top bottom',
-              toggleActions: 'play none none none',
+          // immediateRender:false keeps the element visible unless the tween
+          // actually runs, so a trigger that never fires can't hide content.
+          gsap.fromTo(
+            el,
+            { y: 28, opacity: 0 },
+            {
+              y: 0,
+              opacity: 1,
+              duration: 0.8,
+              ease: 'power3.out',
+              immediateRender: false,
+              scrollTrigger: {
+                trigger: el,
+                start: 'top bottom',
+                toggleActions: 'play none none none',
+              },
             },
-          })
+          )
         })
 
         const count = pageRef.current?.querySelector<HTMLElement>('.about-count')

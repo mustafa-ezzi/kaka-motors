@@ -1,4 +1,4 @@
-import { AnimatePresence, motion } from 'framer-motion'
+import { useEffect, useLayoutEffect } from 'react'
 import type { ReactNode } from 'react'
 import { useLocation } from 'wouter'
 import { ScrollTrigger } from '../lib/gsap'
@@ -6,24 +6,20 @@ import { ScrollTrigger } from '../lib/gsap'
 export function PageShell({ children }: { children: ReactNode }) {
   const [location] = useLocation()
 
+  // Wouter keeps the previous scroll offset on navigation, which lands the user
+  // in empty space below a shorter page.
+  useLayoutEffect(() => {
+    window.scrollTo(0, 0)
+  }, [location])
+
+  useEffect(() => {
+    const id = window.setTimeout(() => ScrollTrigger.refresh(), 140)
+    return () => window.clearTimeout(id)
+  }, [location])
+
   return (
-    <AnimatePresence mode="wait">
-      <motion.main
-        key={location}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        transition={{ duration: 0.25 }}
-        onAnimationComplete={() => {
-          // Recalculate ScrollTrigger positions after page transition + layout settle
-          requestAnimationFrame(() => ScrollTrigger.refresh())
-        }}
-        className="relative z-10"
-        id="main"
-        tabIndex={-1}
-      >
-        {children}
-      </motion.main>
-    </AnimatePresence>
+    <main key={location} className="page-enter relative z-10" id="main" tabIndex={-1}>
+      {children}
+    </main>
   )
 }

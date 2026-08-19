@@ -1,4 +1,5 @@
 import { type FormEvent, useEffect, useMemo, useRef, useState } from 'react'
+import { MapPin } from 'lucide-react'
 import { useSearch } from 'wouter'
 import { CatalogState } from '../components/CatalogState'
 import { Seo } from '../components/Seo'
@@ -20,7 +21,7 @@ type FormState = {
   hpField: string
 }
 
-type FieldKey = 'name' | 'email' | 'phone' | 'date' | 'slot' | 'city' | 'vehicleSlug' | 'consent'
+type FieldKey = 'name' | 'email' | 'phone' | 'date' | 'slot' | 'vehicleSlug' | 'consent'
 
 type CreatedRequest = {
   reference: string
@@ -33,7 +34,6 @@ const FIELD_IDS: Record<FieldKey, string> = {
   phone: 'drive-phone',
   date: 'drive-date',
   slot: 'drive-slot',
-  city: 'drive-city',
   vehicleSlug: 'drive-vehicle',
   consent: 'drive-consent',
 }
@@ -291,19 +291,13 @@ export function TestDrivePage() {
                 <option value="evening">Evening · 17:00–20:00</option>
               </select>
             </label>
-            <label className="mt-5 block" htmlFor="drive-city">
-              <span className="font-mono text-[0.62rem] uppercase tracking-[0.2em] text-white/50">City</span>
-              <select
-                id="drive-city"
-                className="focus-scarlet mt-2 min-h-11 w-full border border-white/15 bg-ink px-3 py-3 text-fog"
-                value={form.city}
-                onChange={(event) => setForm({ ...form, city: event.target.value })}
-              >
-                {cities.map((city) => (
-                  <option key={city}>{city}</option>
-                ))}
-              </select>
-            </label>
+            <div className="mt-5">
+              <span className="font-mono text-[0.62rem] uppercase tracking-[0.2em] text-white/50">Studio</span>
+              <p className="mt-2 flex min-h-11 items-center gap-2 border border-white/10 bg-white/[0.03] px-3 py-3 text-sm text-white/70">
+                <MapPin size={14} className="shrink-0 text-amber" aria-hidden />
+                {form.city} · one floor, by appointment
+              </p>
+            </div>
 
             <fieldset className="mt-6 border-0 p-0">
               <legend className="font-mono text-[0.62rem] uppercase tracking-[0.2em] text-white/50">Vehicle</legend>
