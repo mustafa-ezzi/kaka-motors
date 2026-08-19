@@ -13,7 +13,7 @@ export function PageShell({ children }: { children: ReactNode }) {
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 0.35 }}
-        className={`relative z-10 ${location === '/' || location === '/about' ? '' : 'overflow-x-clip'}`}
+        className={`relative z-10 overflow-x-hidden ${location === '/about' ? '' : ''}`}
         id="main"
         tabIndex={-1}
       >

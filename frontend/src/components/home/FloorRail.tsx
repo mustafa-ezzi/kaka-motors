@@ -10,7 +10,7 @@ export function FloorRail({ vehicles, light = false }: { vehicles: Vehicle[]; li
   if (!vehicles.length) return null
 
   return (
-    <section className="floor-rail relative py-10 md:py-16">
+    <section className="floor-rail relative overflow-x-hidden py-10 md:py-16">
       <div className="shell">
         {/* Heading */}
         <p className={`font-mono text-[0.66rem] uppercase tracking-[0.26em] ${light ? 'text-amber' : 'text-scarlet-soft'}`}>
