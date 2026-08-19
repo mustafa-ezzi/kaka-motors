@@ -86,7 +86,7 @@ export function CarDetailPage() {
   }
 
   return (
-    <article className="pb-20 pt-28 md:pt-32">
+    <article className="pb-20 pt-20 md:pt-28">
       <Seo
         title={`${car.name} — Kaka Motors`}
         description={car.summary}
@@ -101,6 +101,8 @@ export function CarDetailPage() {
           brand: { '@type': 'Brand', name: 'Kaka Motors' },
         }}
       />
+
+      {/* Header */}
       <div className="shell">
         <Link
           href="/showcase"
@@ -108,12 +110,13 @@ export function CarDetailPage() {
         >
           <ArrowLeft size={14} /> Back to collection
         </Link>
-        <p className="eyebrow mt-8">{car.statusLabel}</p>
-        <h1 className="display mt-3 text-[clamp(2.8rem,7vw,6rem)]">{car.name}</h1>
-        <p className="mt-4 max-w-2xl text-white/65">{car.summary}</p>
+        <p className="eyebrow mt-6">{car.statusLabel}</p>
+        <h1 className="display mt-2 text-[clamp(2.2rem,7vw,6rem)] leading-none">{car.name}</h1>
+        <p className="mt-3 max-w-2xl text-sm leading-relaxed text-white/65 md:text-base">{car.summary}</p>
       </div>
 
-      <div className="relative mt-8 aspect-[16/10] min-h-[52vh] overflow-hidden md:min-h-[72vh]">
+      {/* Image viewer */}
+      <div className="relative mt-6 w-full overflow-hidden" style={{ aspectRatio: '16/9', minHeight: '44vw', maxHeight: '80vh' }}>
         {current && (
           <ShowroomImage
             key={current.id}
@@ -126,58 +129,64 @@ export function CarDetailPage() {
             sizes="100vw"
           />
         )}
-        <div className="absolute inset-0 bg-gradient-to-t from-ink/80 to-transparent" />
-        {tabs.length > 1 && (
-          <div className="absolute bottom-6 left-1/2 z-10 flex -translate-x-1/2 gap-2 rounded-full p-1 glass">
-            {tabs.map((item, index) => (
-              <button
-                key={item.id}
-                type="button"
-                onClick={() => setActive(index)}
-                className={`focus-scarlet min-h-11 rounded-full px-4 font-mono text-[0.62rem] uppercase tracking-[0.18em] ${
-                  active === index ? 'bg-white text-ink' : 'text-white/70 hover:text-white'
-                }`}
-              >
-                {item.label ?? `View ${index + 1}`}
-              </button>
-            ))}
-          </div>
-        )}
+        <div className="absolute inset-0 bg-gradient-to-t from-ink/60 to-transparent" />
       </div>
 
-      <div className="shell mt-10 grid gap-10 md:grid-cols-[1.1fr_0.9fr] md:items-start">
+      {/* Gallery tab strip — below image, not overlapping */}
+      {tabs.length > 1 && (
+        <div className="shell mt-3 flex flex-wrap gap-2">
+          {tabs.map((item, index) => (
+            <button
+              key={item.id}
+              type="button"
+              onClick={() => setActive(index)}
+              className={`focus-scarlet min-h-10 rounded-full px-4 font-mono text-[0.6rem] uppercase tracking-[0.18em] transition-colors ${
+                active === index
+                  ? 'bg-white text-ink'
+                  : 'border border-white/20 text-white/60 hover:border-white/50 hover:text-white'
+              }`}
+            >
+              {item.label ?? `View ${index + 1}`}
+            </button>
+          ))}
+        </div>
+      )}
+
+      {/* Body content */}
+      <div className="shell mt-8 grid gap-8 md:mt-12 md:grid-cols-[1.1fr_0.9fr] md:items-start md:gap-12">
         <div>
-          <p className="text-base leading-relaxed text-white/70">{car.description}</p>
+          <p className="text-sm leading-relaxed text-white/70 md:text-base">{car.description}</p>
           {car.interiorStory && (
-            <div className="mt-10">
+            <div className="mt-8">
               <p className="eyebrow">Interior</p>
-              <p className="mt-3 text-base leading-relaxed text-white/70">{car.interiorStory}</p>
+              <p className="mt-3 text-sm leading-relaxed text-white/70 md:text-base">{car.interiorStory}</p>
             </div>
           )}
           {car.features.length > 0 && (
-            <ul className="mt-8 space-y-2">
+            <ul className="mt-6 space-y-2">
               {car.features.map((feature) => (
-                <li key={feature} className="font-mono text-[0.7rem] uppercase tracking-[0.16em] text-white/55">
+                <li key={feature} className="font-mono text-[0.66rem] uppercase tracking-[0.14em] text-white/50">
                   — {feature}
                 </li>
               ))}
             </ul>
           )}
         </div>
-        <div className="space-y-4">
+
+        <div className="space-y-5">
           <SpecGrid specs={car.specs} />
           <div className="flex flex-wrap gap-3">
             <ButtonLink href={`/test-drive?car=${car.slug}`}>Reserve a drive</ButtonLink>
             <button
               type="button"
               onClick={toggleShortlist}
-              className={`focus-scarlet inline-flex min-h-11 items-center gap-2 border px-4 font-mono text-[0.68rem] uppercase tracking-[0.18em] ${
-                saved ? 'border-scarlet text-scarlet-soft' : 'border-white/20 text-white/70'
+              className={`focus-scarlet inline-flex min-h-11 items-center gap-2 rounded-full border px-5 font-mono text-[0.66rem] uppercase tracking-[0.18em] transition-colors ${
+                saved ? 'border-scarlet text-scarlet-soft' : 'border-white/20 text-white/60 hover:border-white/50 hover:text-white'
               }`}
               aria-pressed={saved}
             >
-              <Heart size={14} fill={saved ? 'currentColor' : 'none'} />
-              {saved ? 'On shortlist' : 'Add to shortlist'}
+              <Heart size={13} fill={saved ? 'currentColor' : 'none'} />
+              {saved ? 'Shortlisted' : 'Shortlist'}
             </button>
           </div>
         </div>

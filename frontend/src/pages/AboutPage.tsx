@@ -61,14 +61,14 @@ export function AboutPage() {
       mm.add('(prefers-reduced-motion: no-preference)', () => {
         gsap.utils.toArray<HTMLElement>('.about-reveal').forEach((el) => {
           gsap.from(el, {
-            y: 36,
+            y: 28,
             opacity: 0,
-            duration: 0.9,
+            duration: 0.8,
             ease: 'power3.out',
             scrollTrigger: {
               trigger: el,
-              start: 'top 86%',
-              toggleActions: 'play none none reverse',
+              start: 'top bottom',
+              toggleActions: 'play none none none',
             },
           })
         })
@@ -83,8 +83,8 @@ export function AboutPage() {
             snap: { n: 1 },
             scrollTrigger: {
               trigger: count,
-              start: 'top 82%',
-              toggleActions: 'play none none reverse',
+              start: 'top bottom',
+              toggleActions: 'play none none none',
             },
             onUpdate: () => {
               count.textContent = String(Math.round(obj.n)).padStart(2, '0')
