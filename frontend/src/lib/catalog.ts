@@ -30,41 +30,83 @@ export function vehicleBySlug(slug: string, list: Vehicle[]) {
   return publishedVehicles(list).find((car) => car.slug === slug)
 }
 
+// ─── Module-level cache ───────────────────────────────────────────────────────
+// The catalog is fetched once per page load. Subsequent useCatalog() calls
+// (e.g. navigating to /showcase) resolve instantly from the cache instead of
+// showing a loading state again.
+
+type CatalogCache = {
+  vehicles: Vehicle[]
+  content: SiteContent
+  cities: string[]
+}
+
+let catalogCache: CatalogCache | null = null
+let catalogPromise: Promise<CatalogCache> | null = null
+
+async function fetchCatalog(): Promise<CatalogCache> {
+  const [vehicleRows, contentRow, locationRows] = await Promise.all([
+    apiGet<Vehicle[]>('/vehicles/'),
+    apiGet<SiteContent>('/content/'),
+    apiGet<LocationRow[]>('/locations/'),
+  ])
+  return {
+    vehicles: vehicleRows.map(withAccent),
+    content: { ...mockContent, ...contentRow },
+    cities: locationRows.length ? locationRows.map((row) => row.city) : mockCities,
+  }
+}
+
+function getCatalogPromise(): Promise<CatalogCache> {
+  if (!catalogPromise) {
+    catalogPromise = fetchCatalog().catch((err) => {
+      // Reset so the next mount can retry
+      catalogPromise = null
+      throw err
+    })
+  }
+  return catalogPromise
+}
+
 export function useCatalog() {
-  const [vehicles, setVehicles] = useState<Vehicle[]>([])
-  const [content, setContent] = useState<SiteContent>(mockContent)
-  const [cities, setCities] = useState<string[]>(mockCities)
-  const [loading, setLoading] = useState(true)
+  const [vehicles, setVehicles] = useState<Vehicle[]>(catalogCache?.vehicles ?? [])
+  const [content, setContent] = useState<SiteContent>(catalogCache?.content ?? mockContent)
+  const [cities, setCities] = useState<string[]>(catalogCache?.cities ?? mockCities)
+  // If we already have a cache, start as not-loading so there's no flash
+  const [loading, setLoading] = useState(catalogCache === null)
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
+    if (catalogCache) {
+      // Already resolved — apply immediately, no fetch needed
+      setVehicles(catalogCache.vehicles)
+      setContent(catalogCache.content)
+      setCities(catalogCache.cities)
+      setLoading(false)
+      return
+    }
+
     let cancelled = false
 
-    async function load() {
-      try {
-        const [vehicleRows, contentRow, locationRows] = await Promise.all([
-          apiGet<Vehicle[]>('/vehicles/'),
-          apiGet<SiteContent>('/content/'),
-          apiGet<LocationRow[]>('/locations/'),
-        ])
+    getCatalogPromise()
+      .then((data) => {
         if (cancelled) return
-        setVehicles(vehicleRows.map(withAccent))
-        setContent({ ...mockContent, ...contentRow })
-        if (locationRows.length) {
-          setCities(locationRows.map((row) => row.city))
-        }
+        catalogCache = data
+        setVehicles(data.vehicles)
+        setContent(data.content)
+        setCities(data.cities)
         setError(null)
-      } catch {
+      })
+      .catch(() => {
         if (!cancelled) {
           setVehicles([])
           setError('The studio catalog could not be reached. Confirm Django is running on port 8001.')
         }
-      } finally {
+      })
+      .finally(() => {
         if (!cancelled) setLoading(false)
-      }
-    }
+      })
 
-    void load()
     return () => {
       cancelled = true
     }
