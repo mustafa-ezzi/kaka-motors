@@ -50,11 +50,14 @@ async function fetchCatalog(): Promise<CatalogCache> {
     apiGet<SiteContent>('/content/'),
     apiGet<LocationRow[]>('/locations/'),
   ])
-  return {
+  const data: CatalogCache = {
     vehicles: vehicleRows.map(withAccent),
     content: { ...mockContent, ...contentRow },
     cities: locationRows.length ? locationRows.map((row) => row.city) : mockCities,
   }
+  // Populate the cache as soon as data arrives so any other consumer gets it
+  catalogCache = data
+  return data
 }
 
 function getCatalogPromise(): Promise<CatalogCache> {
@@ -62,23 +65,28 @@ function getCatalogPromise(): Promise<CatalogCache> {
     catalogPromise = fetchCatalog().catch((err) => {
       // Reset so the next mount can retry
       catalogPromise = null
+      catalogCache = null
       throw err
     })
   }
   return catalogPromise
 }
 
+// Start the fetch eagerly as soon as this module is imported (i.e. on first page load)
+// so data is already resolving before any component mounts.
+getCatalogPromise()
+
 export function useCatalog() {
+  // Initialise directly from cache if available — no loading flash on navigation
   const [vehicles, setVehicles] = useState<Vehicle[]>(catalogCache?.vehicles ?? [])
-  const [content, setContent] = useState<SiteContent>(catalogCache?.content ?? mockContent)
-  const [cities, setCities] = useState<string[]>(catalogCache?.cities ?? mockCities)
-  // If we already have a cache, start as not-loading so there's no flash
-  const [loading, setLoading] = useState(catalogCache === null)
-  const [error, setError] = useState<string | null>(null)
+  const [content, setContent]   = useState<SiteContent>(catalogCache?.content ?? mockContent)
+  const [cities, setCities]     = useState<string[]>(catalogCache?.cities ?? mockCities)
+  const [loading, setLoading]   = useState(catalogCache === null)
+  const [error, setError]       = useState<string | null>(null)
 
   useEffect(() => {
+    // Cache already populated (navigated from another page) — apply and return
     if (catalogCache) {
-      // Already resolved — apply immediately, no fetch needed
       setVehicles(catalogCache.vehicles)
       setContent(catalogCache.content)
       setCities(catalogCache.cities)
@@ -86,30 +94,27 @@ export function useCatalog() {
       return
     }
 
-    let cancelled = false
+    let mounted = true
 
     getCatalogPromise()
       .then((data) => {
-        if (cancelled) return
-        catalogCache = data
+        // catalogCache is already set inside fetchCatalog; just update this component
+        if (!mounted) return
         setVehicles(data.vehicles)
         setContent(data.content)
         setCities(data.cities)
         setError(null)
       })
       .catch(() => {
-        if (!cancelled) {
-          setVehicles([])
-          setError('The studio catalog could not be reached. Confirm Django is running on port 8001.')
-        }
+        if (!mounted) return
+        setVehicles([])
+        setError('The studio catalog could not be reached. Confirm Django is running on port 8001.')
       })
       .finally(() => {
-        if (!cancelled) setLoading(false)
+        if (mounted) setLoading(false)
       })
 
-    return () => {
-      cancelled = true
-    }
+    return () => { mounted = false }
   }, [])
 
   return { vehicles, content, cities, loading, error }
